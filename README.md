@@ -12,8 +12,8 @@ Magento is a fully integrated ecommerce system and web store written in PHP.  Th
 
 ## Features
 
-* PHP 7.3
-* MariaDB 10.4
+* PHP 7.4
+* MariaDB 10.6
 * Redis 6.0
 * Dedicated worker instance for background processing
 * Automatic TLS certificates
