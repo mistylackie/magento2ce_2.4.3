@@ -38,7 +38,7 @@
         "colinmollenhour/cache-backend-redis": "1.14.2",
         "colinmollenhour/credis": "1.13.0",
         "colinmollenhour/php-redis-session-abstract": "~1.4.5",
-        "composer/composer": "^1.9 || ^2.0",
+        "composer/composer": "^2.0",
         "elasticsearch/elasticsearch": "~7.17.0",
         "guzzlehttp/guzzle": "^7.4.2",
         "laminas/laminas-captcha": "^2.12",
@@ -67,7 +67,7 @@
         "magento/composer-dependency-version-audit-plugin": "~0.1",
         "magento/magento-composer-installer": ">=0.3.0",
         "magento/zendframework1": "~1.15.0",
-        "monolog/monolog": "^2.5",
+        "monolog/monolog": "^1.17",
         "pelago/emogrifier": "^6.0.0",
         "php-amqplib/php-amqplib": "~3.2.0",
         "phpseclib/mcrypt_compat": "~2.0.2",
@@ -95,7 +95,6 @@
         "mageme/module-webforms-3": "^3.0",
         "magento/composer-root-update-plugin": "~1.1",
         "magento/data-migration-tool": "2.4.0",
-        "magento/product-community-edition": "2.4.3",
         "olegkoval/magento2-regenerate-url-rewrites": "^1.6",
         "paradoxlabs/authnetcim": "4.3.8",
         "sparsh/magento-2-smtp-extension": "1.0.1"
@@ -106,7 +105,6 @@
         "friendsofphp/php-cs-fixer": "~3.4.0",
         "lusitanian/oauth": "~0.8.10",
         "magento/magento-coding-standard": "*",
-        "magento/magento2-functional-testing-framework": "^3.7",
         "pdepend/pdepend": "~2.10.0",
         "phpcompatibility/php-compatibility": "^9.3",
         "phpmd/phpmd": "^2.12.0",
@@ -355,24 +353,6 @@
     "conflict": {
         "gene/bluefoot": "*"
     },
-    "extra": {
-        "component_paths": {
-            "trentrichardson/jquery-timepicker-addon": "lib/web/jquery/jquery-ui-timepicker-addon.js",
-            "components/jquery": [
-                "lib/web/jquery.js",
-                "lib/web/jquery/jquery.min.js",
-                "lib/web/jquery/jquery-migrate.js"
-            ],
-            "blueimp/jquery-file-upload": "lib/web/jquery/fileUploader",
-            "components/jqueryui": [
-                "lib/web/jquery/jquery-ui.js"
-            ],
-            "twbs/bootstrap": [
-                "lib/web/jquery/jquery.tabs.js"
-            ],
-            "tinymce/tinymce": "lib/web/tiny_mce_5"
-        }
-    },
     "autoload": {
         "psr-4": {
             "Magento\\Framework\\": "lib/internal/Magento/Framework/",
@@ -404,5 +384,39 @@
             "Magento\\PhpStan\\": "dev/tests/static/framework/Magento/PhpStan/"
         }
     },
-    "prefer-stable": true
+    "version": "2.4.3",
+    "minimum-stability": "stable",
+    "repositories": {
+        "0": {
+            "type": "composer",
+            "url": "https://repo.magento.com/"
+        },
+        "amasty": {
+            "type": "composer",
+            "url": "https://composer.amasty.com/community"
+        },
+        "mageme": {
+            "type": "composer",
+            "url": "https://repo.mageme.com"
+        }
+    },
+    "extra": {
+        "magento-force": "override",
+        "component_paths": {
+            "trentrichardson/jquery-timepicker-addon": "lib/web/jquery/jquery-ui-timepicker-addon.js",
+            "components/jquery": [
+                "lib/web/jquery.js",
+                "lib/web/jquery/jquery.min.js",
+                "lib/web/jquery/jquery-migrate.js"
+            ],
+            "blueimp/jquery-file-upload": "lib/web/jquery/fileUploader",
+            "components/jqueryui": [
+                "lib/web/jquery/jquery-ui.js"
+            ],
+            "twbs/bootstrap": [
+                "lib/web/jquery/jquery.tabs.js"
+            ],
+            "tinymce/tinymce": "lib/web/tiny_mce_5"
+        }
+    }
 }
