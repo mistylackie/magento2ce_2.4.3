@@ -1,14 +1,6 @@
 db:
     type: mariadb:10.4
     disk: 2048
-    configuration:
-        schemas:
-            - hogue_m2
-        endpoints:
-            mysql:
-                default_schema: hogue_m2
-                privileges:
-                    hogue_m2: admin
 
 cache:
     type: redis:6.0
