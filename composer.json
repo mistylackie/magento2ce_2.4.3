@@ -102,21 +102,4 @@
     },
     "version": "2.4.3",
     "minimum-stability": "stable",
-    "repositories": {
-        "0": {
-            "type": "composer",
-            "url": "https://repo.magento.com/"
-        },
-        "amasty": {
-            "type": "composer",
-            "url": "https://composer.amasty.com/community"
-        },
-        "mageme": {
-            "type": "composer",
-            "url": "https://repo.mageme.com"
-        }
-    },
-    "extra": {
-        "magento-force": "override"
-    }
 }
