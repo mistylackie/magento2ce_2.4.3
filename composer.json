@@ -29,14 +29,6 @@
         "ext-xsl": "*",
         "ext-zip": "*",
         "lib-libxml": "*",
-        "amasty/module-customer-attributes": "2.3.1",
-        "amasty/module-shipping-suite-meta": "1.0.1",
-        "amasty/module-store-locator": "2.5.1",
-        "amasty/number": "1.1.7",
-        "amasty/payrestriction": "2.3.11",
-        "amasty/sorting": "2.8.12",
-        "amasty/groupcat": "1.7.3",
-        "amasty/adminactionslog": "1.2.13",
         "commersys/announcementbar": "1.1.0",
         "composer/composer": "^2",
         "lcobucci/jwt": "^3.2",
@@ -44,7 +36,6 @@
         "mageme/module-webforms-3": "^3.0",
         "magento/composer-dependency-version-audit-plugin": "~0.1",
         "magento/composer-root-update-plugin": "~1.1",
-        "magento/magento-composer-installer": ">=0.1.11",
         "magento/data-migration-tool": "2.4.0",
         "magento/product-community-edition": "2.4.3",
         "olegkoval/magento2-regenerate-url-rewrites": "^1.6",
@@ -102,10 +93,6 @@
     "version": "2.4.3",
     "minimum-stability": "stable",
     "repositories": {
-        "amasty": {
-            "type": "composer",
-            "url": "https://composer.amasty.com/community"
-        },
         "mageme": {
             "type": "composer",
             "url": "https://repo.mageme.com"
