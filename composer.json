@@ -102,11 +102,7 @@
     "version": "2.4.3",
     "minimum-stability": "stable",
     "repositories": {
-        "0": {
-            "type": "composer",
-            "url": "https://repo.magento.com/"
-        },
-        ,"amasty": {
+        "amasty": {
             "type": "composer",
             "url": "https://composer.amasty.com/community"
         },
