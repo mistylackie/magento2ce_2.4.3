@@ -359,7 +359,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "LaminasTest\\Mvc\\": "test/"
+            "LaminasTest\\Mvc\\": "test/",
             "Magento\\Sniffs\\": "dev/tests/static/framework/Magento/Sniffs/",
             "Magento\\Tools\\": "dev/tools/Magento/Tools/",
             "Magento\\Tools\\Sanity\\": "dev/build/publication/sanity/Magento/Tools/Sanity/",
