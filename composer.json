@@ -102,7 +102,7 @@
         "squizlabs/php_codesniffer": "~2.9.2"
     },
     "suggest": {
-        "ext-pcntl": "Need for run processes in parallel mode",
+        "ext-pcntl": "Need for run processes in parallel mode"
     },
     "replace": {
         "magento/module-marketplace": "100.3.4",
