@@ -93,7 +93,6 @@
         "laminas/laminas-coding-standard": "^1.0.0",
         "laminas/laminas-json": "^3.3",
         "lusitanian/oauth": "~0.8.10",
-        "magento/magento-coding-standard": "*",
         "magento/magento2-functional-testing-framework": "^2.6.4",
         "pdepend/pdepend": "2.5.2",
         "phpcompatibility/php-compatibility": "^9.3",
