@@ -97,7 +97,6 @@
         "pdepend/pdepend": "2.5.2",
         "phpcompatibility/php-compatibility": "^9.3",
         "phpmd/phpmd": "@stable",
-        "phpspec/prophecy-phpunit": "^2.0",
         "phpstan/phpstan": "^0.12.2",
         "phpunit/phpunit": "~6.5.0",
         "sebastian/phpcpd": "~3.0.0",
