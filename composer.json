@@ -296,7 +296,8 @@
         "magento/module-csp": "100.3.0"
     },
     "conflict": {
-        "gene/bluefoot": "*"
+        "gene/bluefoot": "*",
+        "laminas/laminas-mvc": "*"
     },
     "extra": {
         "component_paths": {
