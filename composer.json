@@ -25,7 +25,6 @@
         "ext-pdo_mysql": "*",
         "ext-simplexml": "*",
         "ext-soap": "*",
-        "ext-sodium": "*",
         "ext-xsl": "*",
         "ext-zip": "*",
         "lib-libxml": "*",
@@ -34,7 +33,7 @@
         "colinmollenhour/credis": "1.11.1",
         "colinmollenhour/php-redis-session-abstract": "~1.4.0",
         "composer/composer": "^1.9 || ^2.0",
-        "elasticsearch/elasticsearch": "~7.6",
+        "elasticsearch/elasticsearch": "~7.11.0",
         "guzzlehttp/guzzle": "^6.3.3",
         "laminas/laminas-captcha": "^2.10",
         "laminas/laminas-code": "^3.5.1",
@@ -356,8 +355,7 @@
         "psr-4": {
             "Magento\\Framework\\": "lib/internal/Magento/Framework/",
             "Magento\\Setup\\": "setup/src/Magento/Setup/",
-            "Magento\\": "app/code/Magento/",
-            "Zend\\Mvc\\Controller\\": "setup/src/Zend/Mvc/Controller/"
+            "Magento\\": "app/code/Magento/"
         },
         "psr-0": {
             "": [
@@ -384,6 +382,5 @@
             "Magento\\PhpStan\\": "dev/tests/static/framework/Magento/PhpStan/"
         }
     },
-    "version": "2.4.3",
     "prefer-stable": true
 }
