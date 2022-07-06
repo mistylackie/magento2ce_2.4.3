@@ -16,7 +16,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     private $objectManager;
 
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->objectManager = Bootstrap::getObjectManager();
     }
@@ -28,6 +28,7 @@ class ConfigTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetRouteFrontName($route, $scope)
     {
+        CacheCleaner::cleanAll();
         $this->assertEquals(
             $this->objectManager->create(Config::class)->getRouteFrontName($route, $scope),
             $this->objectManager->create(Config::class)->getRouteFrontName($route, $scope)

@@ -14,8 +14,8 @@ use Magento\Framework\ObjectManager\ConfigInterface;
 use Magento\Framework\ObjectManagerInterface;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use Magento\Framework\View\Element\UiComponent\Argument\Interpreter\ConfigurableObject;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Unit tests for ConfigurableObject
@@ -47,13 +47,13 @@ class ConfigurableObjectTest extends TestCase
      */
     private $objectManagerConfig;
 
-    protected function setUp(): void
+    protected function setUp()
     {
         $objectManager = new ObjectManager($this);
-        $this->objectManager = $this->getMockForAbstractClass(ObjectManagerInterface::class);
-        $this->interpreter = $this->getMockForAbstractClass(InterpreterInterface::class);
+        $this->objectManager = $this->createMock(ObjectManagerInterface::class);
+        $this->interpreter = $this->createMock(InterpreterInterface::class);
         $this->classReader = $this->createMock(ClassReader::class);
-        $this->objectManagerConfig = $this->getMockForAbstractClass(ConfigInterface::class);
+        $this->objectManagerConfig = $this->createMock(ConfigInterface::class);
         $this->configurableObject = $objectManager->getObject(
             ConfigurableObject::class,
             [
@@ -65,10 +65,6 @@ class ConfigurableObjectTest extends TestCase
                 ],
                 'classReader' => $this->classReader,
                 'objectManagerConfig' => $this->objectManagerConfig,
-                'deniedClassList' => [
-                    \Foo\Bar\ClassC::class,
-                    \Foo\Bar\InterfaceC::class,
-                ],
             ]
         );
     }
@@ -103,10 +99,12 @@ class ConfigurableObjectTest extends TestCase
 
         $this->interpreter
             ->method('evaluate')
-            ->willReturnCallback(
-                function (array $arg) {
-                    return $arg['value'];
-                }
+            ->will(
+                $this->returnCallback(
+                    function (array $arg) {
+                        return $arg['value'];
+                    }
+                )
             );
 
         $actualResult = $this->configurableObject->evaluate($data);
@@ -123,6 +121,7 @@ class ConfigurableObjectTest extends TestCase
         $expectedException,
         $expectedExceptionMessage
     ) {
+
         $this->expectException($expectedException);
         $this->expectExceptionMessage($expectedExceptionMessage);
 
@@ -145,10 +144,12 @@ class ConfigurableObjectTest extends TestCase
 
         $this->interpreter
             ->method('evaluate')
-            ->willReturnCallback(
-                function (array $arg) {
-                    return $arg['value'];
-                }
+            ->will(
+                $this->returnCallback(
+                    function (array $arg) {
+                        return $arg['value'];
+                    }
+                )
             );
 
         $actualResult = $this->configurableObject->evaluate($data);
@@ -271,27 +272,6 @@ class ConfigurableObjectTest extends TestCase
                 ],
                 \InvalidArgumentException::class,
                 'Class argument is invalid: MyFooClass'
-            ],
-            [
-                [
-                    'argument' => [
-                        'class' => ['value' => 'MyFooClass'],
-                        'myarg' => ['value' => 'bar'],
-                    ],
-                ],
-                'MyFooClass',
-                [
-                    ['MyFooClass', ['Something', 'skipme']],
-                    ['Something', ['dontcare', 'SomethingElse']],
-                    ['SomethingElse', [\Foo\Bar\ClassC::class, 'unrelated']],
-                    ['skipme', []],
-                    ['dontcare', []],
-                    ['unrelated', [\Foo\Bar\InterfaceC::class]],
-                    [\Foo\Bar\ClassC::class, []],
-                    [\Foo\Bar\InterfaceC::class, []],
-                ],
-                \InvalidArgumentException::class,
-                'Class argument is invalid: MyFooClass',
             ],
         ];
     }

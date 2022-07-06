@@ -3,11 +3,7 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
-
 namespace Magento\Widget\Test\Unit\Block\Adminhtml\Widget\Instance\Edit\Chooser;
-
-use Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Chooser\Container;
 
 class ContainerTest extends AbstractContainerTest
 {
@@ -19,16 +15,17 @@ class ContainerTest extends AbstractContainerTest
     /**
      * @return void
      */
-    protected function setUp(): void
+    protected function setUp()
     {
         parent::setUp();
 
-        $this->containerBlock = new Container(
-            $this->contextMock,
-            $this->layoutProcessorFactoryMock,
-            $this->themeCollectionFactoryMock,
-            [],
-            $this->pageLayoutConfigBuilderMock
+        $this->containerBlock = $this->objectManagerHelper->getObject(
+            \Magento\Widget\Block\Adminhtml\Widget\Instance\Edit\Chooser\Container::class,
+            [
+                'context' => $this->contextMock,
+                'themesFactory' => $this->themeCollectionFactoryMock,
+                'layoutProcessorFactory' => $this->layoutProcessorFactoryMock
+            ]
         );
     }
 

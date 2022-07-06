@@ -21,15 +21,13 @@ class ListCompareTest extends \PHPUnit\Framework\TestCase
     /** @var \Magento\Customer\Model\Session */
     protected $_session;
 
-    protected function setUp(): void
+    protected function setUp()
     {
         /** @var $session \Magento\Customer\Model\Session */
         $this->_session = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
             ->get(\Magento\Customer\Model\Session::class);
         $this->_visitor = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
             ->create(\Magento\Customer\Model\Visitor::class);
-        // md5() used for generate unique session identifier for test purposes.
-        // phpcs:ignore Magento2.Security.InsecureFunction
         $this->_visitor->setSessionId(md5(time()) . md5(microtime()))
             ->setLastVisitAt((new \DateTime())->format(\Magento\Framework\Stdlib\DateTime::DATETIME_PHP_FORMAT))
             ->save();
@@ -37,7 +35,7 @@ class ListCompareTest extends \PHPUnit\Framework\TestCase
             ->create(\Magento\Catalog\Model\Product\Compare\ListCompare::class, ['customerVisitor' => $this->_visitor]);
     }
 
-    protected function tearDown(): void
+    protected function tearDown()
     {
         $this->_session->setCustomerId(null);
     }

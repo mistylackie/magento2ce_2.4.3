@@ -14,7 +14,7 @@ class ModelTest extends \PHPUnit\Framework\TestCase
      */
     protected $_model;
 
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->_model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
             \Magento\Framework\Encryption\Encryptor::class
@@ -33,8 +33,6 @@ class ModelTest extends \PHPUnit\Framework\TestCase
     {
         $encryptor = $this->_model;
 
-        // md5() here is not for cryptographic use just generate random string.
-        // phpcs:ignore Magento2.Security.InsecureFunction
         $initial = md5(uniqid());
         $encrypted = $encryptor->encrypt($initial);
         $this->assertNotEquals($initial, $encrypted);
@@ -43,18 +41,15 @@ class ModelTest extends \PHPUnit\Framework\TestCase
 
     public function testValidateKey()
     {
-        // md5() have to be use here.
-        // phpcs:ignore Magento2.Security.InsecureFunction
         $validKey = md5(uniqid());
         $this->_model->validateKey($validKey);
     }
 
     /**
+     * @expectedException \Exception
      */
     public function testValidateKeyInvalid()
     {
-        $this->expectException(\Exception::class);
-
         $invalidKey = '----    ';
         $this->_model->validateKey($invalidKey);
     }
@@ -64,7 +59,7 @@ class ModelTest extends \PHPUnit\Framework\TestCase
         $password = uniqid();
         $hash = $this->_model->getHash($password, true);
 
-        $this->assertIsString($hash);
+        $this->assertTrue(is_string($hash));
         $this->assertTrue($this->_model->validateHash($password, $hash));
     }
 }

@@ -92,8 +92,6 @@ class Publisher implements PublisherInterface
                     'reply_to' => $replyTo,
                     'delivery_mode' => 2,
                     'correlation_id' => rand(),
-                    // md5() here is not for cryptographic use.
-                    // phpcs:ignore Magento2.Security.InsecureFunction
                     'message_id' => md5(uniqid($topicName))
                 ]
             ]
@@ -109,7 +107,7 @@ class Publisher implements PublisherInterface
      *
      * @return ResponseQueueNameBuilder
      *
-     * @deprecated 103.0.0
+     * @deprecated 102.0.5
      */
     private function getResponseQueueNameBuilder()
     {
@@ -125,7 +123,7 @@ class Publisher implements PublisherInterface
      *
      * @return PublisherConfig
      *
-     * @deprecated 103.0.0
+     * @deprecated 102.0.5
      */
     private function getPublisherConfig()
     {

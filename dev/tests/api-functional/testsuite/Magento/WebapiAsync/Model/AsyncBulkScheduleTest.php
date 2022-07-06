@@ -74,10 +74,10 @@ class AsyncBulkScheduleTest extends WebapiAbstract
      */
     private $registry;
 
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->objectManager = Bootstrap::getObjectManager();
-        $logFilePath = TESTS_TEMP_DIR . "/MessageQueueTestLog.txt";
+        $this->logFilePath = TESTS_TEMP_DIR . "/MessageQueueTestLog.txt";
         $this->registry = $this->objectManager->get(Registry::class);
 
         $params = array_merge_recursive(
@@ -88,7 +88,7 @@ class AsyncBulkScheduleTest extends WebapiAbstract
         /** @var PublisherConsumerController publisherConsumerController */
         $this->publisherConsumerController = $this->objectManager->create(PublisherConsumerController::class, [
             'consumers'     => $this->consumers,
-            'logFilePath'   => $logFilePath,
+            'logFilePath'   => $this->logFilePath,
             'appInitParams' => $params,
         ]);
         $this->productRepository = $this->objectManager->create(ProductRepositoryInterface::class);
@@ -194,12 +194,11 @@ class AsyncBulkScheduleTest extends WebapiAbstract
      * @param string $sku
      * @param string|null $storeCode
      * @dataProvider productGetDataProvider
+     * @expectedException \Exception
+     * @expectedExceptionMessage Specified request cannot be processed.
      */
     public function testGETRequestToAsyncBulk($sku, $storeCode = null)
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('Specified request cannot be processed.');
-
         $this->_markTestAsRestOnly();
         $serviceInfo = [
             'rest' => [
@@ -217,7 +216,7 @@ class AsyncBulkScheduleTest extends WebapiAbstract
         $this->assertNull($response);
     }
 
-    protected function tearDown(): void
+    public function tearDown()
     {
         $this->clearProducts();
         $this->publisherConsumerController->stopConsumers();
@@ -394,6 +393,7 @@ class AsyncBulkScheduleTest extends WebapiAbstract
             ProductInterface::TYPE_ID          => 'simple',
             ProductInterface::PRICE            => 3.62,
             ProductInterface::STATUS           => 1,
+            ProductInterface::TYPE_ID          => 'simple',
             ProductInterface::ATTRIBUTE_SET_ID => 4,
             'custom_attributes'                => [
                 ['attribute_code' => 'cost', 'value' => ''],

@@ -11,10 +11,9 @@ use Magento\Checkout\Helper\Data;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Store\Model\ScopeInterface;
-use Magento\Store\Model\StoreManagerInterface;
 
 /**
- * Provides configuration values for PayPal in-context checkout
+ * Smart button config
  */
 class SmartButtonConfig
 {
@@ -24,7 +23,7 @@ class SmartButtonConfig
     private $localeResolver;
 
     /**
-     * @var Config
+     * @var ConfigFactory
      */
     private $config;
 
@@ -34,35 +33,35 @@ class SmartButtonConfig
     private $defaultStyles;
 
     /**
+     * @var array
+     */
+    private $allowedFunding;
+
+    /**
      * @var ScopeConfigInterface
      */
     private $scopeConfig;
 
     /**
-     * @var SdkUrl
-     */
-    private $sdkUrl;
-
-    /**
      * @param ResolverInterface $localeResolver
      * @param ConfigFactory $configFactory
      * @param ScopeConfigInterface $scopeConfig
-     * @param SdkUrl $sdkUrl
      * @param array $defaultStyles
+     * @param array $allowedFunding
      */
     public function __construct(
         ResolverInterface $localeResolver,
         ConfigFactory $configFactory,
         ScopeConfigInterface $scopeConfig,
-        SdkUrl $sdkUrl,
-        $defaultStyles = []
+        $defaultStyles = [],
+        $allowedFunding = []
     ) {
         $this->localeResolver = $localeResolver;
         $this->config = $configFactory->create();
         $this->config->setMethod(Config::METHOD_EXPRESS);
         $this->scopeConfig = $scopeConfig;
         $this->defaultStyles = $defaultStyles;
-        $this->sdkUrl = $sdkUrl;
+        $this->allowedFunding = $allowedFunding;
     }
 
     /**
@@ -78,11 +77,37 @@ class SmartButtonConfig
             ScopeInterface::SCOPE_STORE
         );
         return [
+            'merchantId' => $this->config->getValue('merchant_id'),
+            'environment' => ((int)$this->config->getValue('sandbox_flag') ? 'sandbox' : 'production'),
+            'locale' => $this->localeResolver->getLocale(),
+            'allowedFunding' => $this->getAllowedFunding($page),
+            'disallowedFunding' => $this->getDisallowedFunding(),
             'styles' => $this->getButtonStyles($page),
             'isVisibleOnProductPage'  => (bool)$this->config->getValue('visible_on_product'),
-            'isGuestCheckoutAllowed'  => $isGuestCheckoutAllowed,
-            'sdkUrl' => $this->sdkUrl->getUrl()
+            'isGuestCheckoutAllowed'  => $isGuestCheckoutAllowed
         ];
+    }
+
+    /**
+     * Returns disallowed funding from configuration
+     *
+     * @return array
+     */
+    private function getDisallowedFunding(): array
+    {
+        $disallowedFunding = $this->config->getValue('disable_funding_options');
+        return $disallowedFunding ? explode(',', $disallowedFunding) : [];
+    }
+
+    /**
+     * Returns allowed funding
+     *
+     * @param string $page
+     * @return array
+     */
+    private function getAllowedFunding(string $page): array
+    {
+        return array_values(array_diff($this->allowedFunding[$page], $this->getDisallowedFunding()));
     }
 
     /**
@@ -133,7 +158,7 @@ class SmartButtonConfig
         // Installment label is only available for specific locales
         if ($styles['label'] === 'installment') {
             if (array_key_exists($locale, $installmentPeriodLocale)) {
-                $styles['period'] = (int)$this->config->getValue(
+                $styles['installmentperiod'] = (int)$this->config->getValue(
                     $page .'_page_button_' . $installmentPeriodLocale[$locale] . '_installment_period'
                 );
             } else {

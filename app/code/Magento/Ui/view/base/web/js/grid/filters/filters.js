@@ -83,10 +83,6 @@ define([
                         component: 'Magento_Ui/js/grid/filters/range',
                         rangeType: 'date'
                     },
-                    datetimeRange: {
-                        component: 'Magento_Ui/js/grid/filters/range',
-                        rangeType: 'datetime'
-                    },
                     textRange: {
                         component: 'Magento_Ui/js/grid/filters/range',
                         rangeType: 'text'
@@ -124,10 +120,7 @@ define([
          *
          * @returns {Filters} Chainable.
          */
-        initialize: function (config) {
-            if (typeof config.options !== 'undefined' && config.options.dateFormat) {
-                this.constructor.defaults.templates.filters.dateRange.dateFormat = config.options.dateFormat;
-            }
+        initialize: function () {
             _.bindAll(this, 'updateActive');
 
             this._super()
@@ -203,7 +196,6 @@ define([
          * @returns {Filters} Chainable.
          */
         apply: function () {
-            $('body').notification('clear');
             this.set('applied', removeEmpty(this.filters));
 
             return this;

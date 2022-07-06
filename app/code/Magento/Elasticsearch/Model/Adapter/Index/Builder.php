@@ -8,9 +8,6 @@ namespace Magento\Elasticsearch\Model\Adapter\Index;
 use Magento\Framework\Locale\Resolver as LocaleResolver;
 use Magento\Elasticsearch\Model\Adapter\Index\Config\EsConfigInterface;
 
-/**
- * Index Builder
- */
 class Builder implements BuilderInterface
 {
     /**
@@ -43,7 +40,7 @@ class Builder implements BuilderInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function build()
     {
@@ -62,31 +59,6 @@ class Builder implements BuilderInterface
                             array_keys($filter)
                         ),
                         'char_filter' => array_keys($charFilter)
-                    ],
-                    // this analyzer must not include stemmer filter
-                    'prefix_search' => [
-                        'type' => 'custom',
-                        'tokenizer' => key($tokenizer),
-                        'filter' => array_merge(
-                            ['lowercase', 'keyword_repeat']
-                        ),
-                        'char_filter' => array_keys($charFilter)
-                    ],
-                    'sku' => [
-                        'type' => 'custom',
-                        'tokenizer' => 'keyword',
-                        'filter' => array_merge(
-                            ['lowercase', 'keyword_repeat'],
-                            array_keys($filter)
-                        ),
-                    ],
-                    // this analyzer must not include stemmer filter
-                    'sku_prefix_search' => [
-                        'type' => 'custom',
-                        'tokenizer' => 'keyword',
-                        'filter' => array_merge(
-                            ['lowercase', 'keyword_repeat']
-                        ),
                     ]
                 ],
                 'tokenizer' => $tokenizer,
@@ -99,10 +71,7 @@ class Builder implements BuilderInterface
     }
 
     /**
-     * Setter for storeId property
-     *
-     * @param int $storeId
-     * @return void
+     * {@inheritdoc}
      */
     public function setStoreId($storeId)
     {
@@ -110,52 +79,47 @@ class Builder implements BuilderInterface
     }
 
     /**
-     * Return tokenizer configuration
-     *
      * @return array
      */
     protected function getTokenizer()
     {
-        return [
+        $tokenizer = [
             'default_tokenizer' => [
-                'type' => 'standard'
-            ]
+                'type' => 'standard',
+            ],
         ];
+        return $tokenizer;
     }
 
     /**
-     * Return filter configuration
-     *
      * @return array
      */
     protected function getFilter()
     {
-        return [
+        $filter = [
             'default_stemmer' => $this->getStemmerConfig(),
             'unique_stem' => [
                 'type' => 'unique',
                 'only_on_same_position' => true
             ]
         ];
+        return $filter;
     }
 
     /**
-     * Return char filter configuration
-     *
      * @return array
      */
     protected function getCharFilter()
     {
-        return [
+        $charFilter = [
             'default_char_filter' => [
                 'type' => 'html_strip',
             ],
         ];
+        return $charFilter;
     }
 
     /**
-     * Return stemmer configuration
-     *
      * @return array
      */
     protected function getStemmerConfig()

@@ -46,7 +46,7 @@ class FindByUrlRewriteTest extends TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->objectManger = Bootstrap::getObjectManager();
         $this->productResource = $this->objectManger->get(ProductResource::class);
@@ -263,20 +263,5 @@ class FindByUrlRewriteTest extends TestCase
         $skus = array_column($productsData, 'sku');
 
         return $this->productResource->getProductsIdsBySkus($skus);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-        $reflection = new \ReflectionObject($this);
-        foreach ($reflection->getProperties() as $property) {
-            if (!$property->isStatic() && 0 !== strpos($property->getDeclaringClass()->getName(), 'PHPUnit')) {
-                $property->setAccessible(true);
-                $property->setValue($this, null);
-            }
-        }
     }
 }

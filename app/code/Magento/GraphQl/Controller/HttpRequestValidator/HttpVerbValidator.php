@@ -11,8 +11,6 @@ use Magento\Framework\App\HttpRequestInterface;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 use Magento\Framework\App\Request\Http;
 use Magento\GraphQl\Controller\HttpRequestValidatorInterface;
-use GraphQL\Language\AST\Node;
-use GraphQL\Language\AST\NodeKind;
 
 /**
  * Validator to check HTTP verb for Graphql requests
@@ -31,25 +29,11 @@ class HttpVerbValidator implements HttpRequestValidatorInterface
         /** @var Http $request */
         if (false === $request->isPost()) {
             $query = $request->getParam('query', '');
-            if (!empty($query)) {
-                $operationType = null;
-                $queryAst = \GraphQL\Language\Parser::parse(new \GraphQL\Language\Source($query ?: '', 'GraphQL'));
-                \GraphQL\Language\Visitor::visit(
-                    $queryAst,
-                    [
-                        'leave' => [
-                            NodeKind::OPERATION_DEFINITION => function (Node $node) use (&$operationType) {
-                                $operationType = $node->operation;
-                            }
-                        ]
-                    ]
+            // The easiest way to determine mutations without additional parsing
+            if (strpos(trim($query), 'mutation') === 0) {
+                throw new GraphQlInputException(
+                    new \Magento\Framework\Phrase('Mutation requests allowed only for POST requests')
                 );
-
-                if (strtolower($operationType) === 'mutation') {
-                    throw new GraphQlInputException(
-                        new \Magento\Framework\Phrase('Mutation requests allowed only for POST requests')
-                    );
-                }
             }
         }
     }

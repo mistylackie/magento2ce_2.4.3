@@ -508,7 +508,8 @@ class Multishipping extends \Magento\Framework\DataObject
     protected function _addShippingItem($quoteItemId, $data)
     {
         $qty = isset($data['qty']) ? (int)$data['qty'] : 1;
-        $addressId = isset($data['address']) ? (int)$data['address'] : false;
+        //$qty       = $qty > 0 ? $qty : 1;
+        $addressId = isset($data['address']) ? $data['address'] : false;
         $quoteItem = $this->getQuote()->getItemById($quoteItemId);
 
         if ($addressId && $quoteItem) {
@@ -694,7 +695,7 @@ class Multishipping extends \Magento\Framework\DataObject
         );
 
         $shippingMethodCode = $address->getShippingMethod();
-        if ($shippingMethodCode) {
+        if (isset($shippingMethodCode) && !empty($shippingMethodCode)) {
             $rate = $address->getShippingRateByCode($shippingMethodCode);
             $shippingPrice = $rate->getPrice();
         } else {
@@ -974,8 +975,7 @@ class Multishipping extends \Magento\Framework\DataObject
                 \Magento\Store\Model\ScopeInterface::SCOPE_STORE
             );
         }
-
-        return __($error);
+        return $error;
     }
 
     /**
@@ -1118,7 +1118,7 @@ class Multishipping extends \Magento\Framework\DataObject
             $this->getCustomer()->getAddresses()
         );
 
-        return in_array($addressId, $applicableAddressIds);
+        return !is_numeric($addressId) || in_array($addressId, $applicableAddressIds);
     }
 
     /**
@@ -1184,9 +1184,7 @@ class Multishipping extends \Magento\Framework\DataObject
 
         $baseTotal = 0;
         foreach ($addresses as $address) {
-            $taxes = $taxInclude
-                ? $address->getBaseTaxAmount() + $address->getBaseDiscountTaxCompensationAmount()
-                : 0;
+            $taxes = $taxInclude ? $address->getBaseTaxAmount() : 0;
             $baseTotal += $address->getBaseSubtotalWithDiscount() + $taxes;
         }
 
@@ -1264,7 +1262,7 @@ class Multishipping extends \Magento\Framework\DataObject
             }
         }
 
-        throw new NotFoundException(__('Quote address for failed order ID "%1" not found.', $order->getEntityId()));
+        throw new NotFoundException(__('Quote address for failed order not found.'));
     }
 
     /**

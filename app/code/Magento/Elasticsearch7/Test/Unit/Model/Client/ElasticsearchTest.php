@@ -4,29 +4,16 @@
  * See COPYING.txt for license details.
  */
 
-declare(strict_types=1);
-
 namespace Magento\Elasticsearch7\Test\Unit\Model\Client;
 
-use Elasticsearch\Client;
-use Elasticsearch\Namespaces\IndicesNamespace;
-use Magento\AdvancedSearch\Model\Client\ClientInterface as ElasticsearchClient;
-use Magento\Elasticsearch\Model\Adapter\FieldMapper\AddDefaultSearchField;
-use Magento\Elasticsearch7\Model\Adapter\DynamicTemplates\IntegerMapper;
-use Magento\Elasticsearch7\Model\Adapter\DynamicTemplates\PositionMapper;
-use Magento\Elasticsearch7\Model\Adapter\DynamicTemplates\PriceMapper;
-use Magento\Elasticsearch7\Model\Adapter\DynamicTemplates\StringMapper;
-use Magento\Elasticsearch7\Model\Adapter\DynamicTemplatesProvider;
-use Magento\Elasticsearch7\Model\Client\Elasticsearch;
-use Magento\Framework\Exception\LocalizedException;
+use Magento\Elasticsearch\Model\Client\Elasticsearch as ElasticsearchClient;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager as ObjectManagerHelper;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
+use Magento\Elasticsearch7\Model\Client\Elasticsearch;
 
 /**
  * Class ElasticsearchTest to test Elasticsearch 7
  */
-class ElasticsearchTest extends TestCase
+class ElasticsearchTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var ElasticsearchClient
@@ -34,12 +21,12 @@ class ElasticsearchTest extends TestCase
     private $model;
 
     /**
-     * @var Client|MockObject
+     * @var \Elasticsearch\Client|\PHPUnit_Framework_MockObject_MockObject
      */
     private $elasticsearchClientMock;
 
     /**
-     * @var IndicesNamespace|MockObject
+     * @var \Elasticsearch\Namespaces\IndicesNamespace|\PHPUnit_Framework_MockObject_MockObject
      */
     private $indicesMock;
 
@@ -53,9 +40,9 @@ class ElasticsearchTest extends TestCase
      *
      * @return void
      */
-    protected function setUp(): void
+    protected function setUp()
     {
-        $this->elasticsearchClientMock = $this->getMockBuilder(Client::class)
+        $this->elasticsearchClientMock = $this->getMockBuilder(\Elasticsearch\Client::class)
             ->setMethods(
                 [
                     'indices',
@@ -69,7 +56,7 @@ class ElasticsearchTest extends TestCase
             )
             ->disableOriginalConstructor()
             ->getMock();
-        $this->indicesMock = $this->getMockBuilder(IndicesNamespace::class)
+        $this->indicesMock = $this->getMockBuilder(\Elasticsearch\Namespaces\IndicesNamespace::class)
             ->setMethods(
                 [
                     'exists',
@@ -78,7 +65,6 @@ class ElasticsearchTest extends TestCase
                     'delete',
                     'putMapping',
                     'deleteMapping',
-                    'getMapping',
                     'stats',
                     'updateAliases',
                     'existsAlias',
@@ -98,32 +84,24 @@ class ElasticsearchTest extends TestCase
             ->willReturn(['version' => ['number' => '7.0.0']]);
 
         $this->objectManager = new ObjectManagerHelper($this);
-        $dynamicTemplatesProvider = new DynamicTemplatesProvider(
-            [
-                new PriceMapper(),
-                new PositionMapper(),
-                new StringMapper(),
-                new IntegerMapper(),
-            ]
-        );
         $this->model = $this->objectManager->getObject(
             Elasticsearch::class,
             [
                 'options' => $this->getOptions(),
-                'elasticsearchClient' => $this->elasticsearchClientMock,
-                'fieldsMappingPreprocessors' => [new AddDefaultSearchField()],
-                'dynamicTemplatesProvider' => $dynamicTemplatesProvider,
+                'elasticsearchClient' => $this->elasticsearchClientMock
             ]
         );
     }
 
+    /**
+     * @expectedException \Magento\Framework\Exception\LocalizedException
+     */
     public function testConstructorOptionsException()
     {
-        $this->expectException('Magento\Framework\Exception\LocalizedException');
         $result = $this->objectManager->getObject(
             Elasticsearch::class,
             [
-                'options' => [],
+                'options' => []
             ]
         );
         $this->assertNotNull($result);
@@ -135,9 +113,9 @@ class ElasticsearchTest extends TestCase
     public function testConstructorWithOptions()
     {
         $result = $this->objectManager->getObject(
-            Elasticsearch::class,
+            \Magento\Elasticsearch7\Model\Client\Elasticsearch::class,
             [
-                'options' => $this->getOptions(),
+                'options' => $this->getOptions()
             ]
         );
         $this->assertNotNull($result);
@@ -148,7 +126,7 @@ class ElasticsearchTest extends TestCase
      *
      * @param array $options
      * @param string $expectedResult
-     * @throws LocalizedException
+     * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \ReflectionException
      * @dataProvider getOptionsDataProvider
      */
@@ -191,7 +169,7 @@ class ElasticsearchTest extends TestCase
                     'index' => 'magento2',
                     'enableAuth' => 0,
                 ],
-                'expected_result' => 'http://localhost:9200',
+                'expected_result' => 'http://localhost:9200'
             ],
             [
                 'with_protocol' => [
@@ -201,8 +179,8 @@ class ElasticsearchTest extends TestCase
                     'index' => 'magento2',
                     'enableAuth' => 0,
                 ],
-                'expected_result' => 'https://localhost:9200',
-            ],
+                'expected_result' => 'https://localhost:9200'
+            ]
         ];
     }
 
@@ -212,7 +190,7 @@ class ElasticsearchTest extends TestCase
     public function testPing()
     {
         $this->elasticsearchClientMock->expects($this->once())->method('ping')->willReturn(true);
-        $this->assertTrue($this->model->ping());
+        $this->assertEquals(true, $this->model->ping());
     }
 
     /**
@@ -221,7 +199,7 @@ class ElasticsearchTest extends TestCase
     public function testTestConnection()
     {
         $this->elasticsearchClientMock->expects($this->once())->method('ping')->willReturn(true);
-        $this->assertTrue($this->model->testConnection());
+        $this->assertEquals(true, $this->model->testConnection());
     }
 
     /**
@@ -230,7 +208,7 @@ class ElasticsearchTest extends TestCase
     public function testTestConnectionFalse()
     {
         $this->elasticsearchClientMock->expects($this->once())->method('ping')->willReturn(false);
-        $this->assertTrue($this->model->testConnection());
+        $this->assertEquals(true, $this->model->testConnection());
     }
 
     /**
@@ -239,15 +217,15 @@ class ElasticsearchTest extends TestCase
     public function testTestConnectionPing()
     {
         $this->model = $this->objectManager->getObject(
-            Elasticsearch::class,
+            \Magento\Elasticsearch7\Model\Client\Elasticsearch::class,
             [
                 'options' => $this->getEmptyIndexOption(),
-                'elasticsearchClient' => $this->elasticsearchClientMock,
+                'elasticsearchClient' => $this->elasticsearchClientMock
             ]
         );
 
         $this->model->ping();
-        $this->assertTrue($this->model->testConnection());
+        $this->assertEquals(true, $this->model->testConnection());
     }
 
     /**
@@ -409,10 +387,10 @@ class ElasticsearchTest extends TestCase
 
     /**
      * Test createIndexIfNotExists() method, case when operation fails
+     * @expectedException \Exception
      */
     public function testCreateIndexFailure()
     {
-        $this->expectException('Exception');
         $this->indicesMock->expects($this->once())
             ->method('create')
             ->with(
@@ -453,7 +431,7 @@ class ElasticsearchTest extends TestCase
                                         'match' => 'price_*',
                                         'match_mapping_type' => 'string',
                                         'mapping' => [
-                                            'type' => 'double',
+                                            'type' => 'float',
                                             'store' => true,
                                         ],
                                     ],
@@ -475,18 +453,10 @@ class ElasticsearchTest extends TestCase
                                         'mapping' => [
                                             'type' => 'text',
                                             'index' => true,
-                                            'copy_to' => '_search',
+                                            'copy_to' => '_search'
                                         ],
                                     ],
-                                ],
-                                [
-                                    'integer_mapping' => [
-                                        'match_mapping_type' => 'long',
-                                        'mapping' => [
-                                            'type' => 'integer',
-                                        ],
-                                    ],
-                                ],
+                                ]
                             ],
                         ],
                     ],
@@ -505,10 +475,10 @@ class ElasticsearchTest extends TestCase
 
     /**
      * Test testAddFieldsMapping() method
+     * @expectedException \Exception
      */
     public function testAddFieldsMappingFailure()
     {
-        $this->expectException('Exception');
         $this->indicesMock->expects($this->once())
             ->method('putMapping')
             ->with(
@@ -532,7 +502,7 @@ class ElasticsearchTest extends TestCase
                                         'match' => 'price_*',
                                         'match_mapping_type' => 'string',
                                         'mapping' => [
-                                            'type' => 'double',
+                                            'type' => 'float',
                                             'store' => true,
                                         ],
                                     ],
@@ -554,18 +524,10 @@ class ElasticsearchTest extends TestCase
                                         'mapping' => [
                                             'type' => 'text',
                                             'index' => true,
-                                            'copy_to' => '_search',
+                                            'copy_to' => '_search'
                                         ],
                                     ],
-                                ],
-                                [
-                                    'integer_mapping' => [
-                                        'match_mapping_type' => 'long',
-                                        'mapping' => [
-                                            'type' => 'integer',
-                                        ],
-                                    ],
-                                ],
+                                ]
                             ],
                         ],
                     ],
@@ -604,10 +566,10 @@ class ElasticsearchTest extends TestCase
 
     /**
      * Test deleteMapping() method
+     * @expectedException \Exception
      */
     public function testDeleteMappingFailure()
     {
-        $this->expectException('Exception');
         $this->indicesMock->expects($this->once())
             ->method('deleteMapping')
             ->with(
@@ -624,24 +586,7 @@ class ElasticsearchTest extends TestCase
     }
 
     /**
-     * Test get Elasticsearch mapping process.
-     *
-     * @return void
-     */
-    public function testGetMapping(): void
-    {
-        $params = ['index' => 'indexName'];
-        $this->indicesMock->expects($this->once())
-            ->method('getMapping')
-            ->with($params)
-            ->willReturn([]);
-
-        $this->model->getMapping($params);
-    }
-
-    /**
      * Test query() method
-     *
      * @return void
      */
     public function testQuery()
@@ -656,7 +601,6 @@ class ElasticsearchTest extends TestCase
 
     /**
      * Test suggest() method
-     *
      * @return void
      */
     public function testSuggest()

@@ -4,7 +4,6 @@
  * Copyright © Magento, Inc. All rights reserved.
  * See COPYING.txt for license details.
  */
-declare(strict_types=1);
 
 namespace Magento\ConfigurableProduct\Api;
 
@@ -22,22 +21,20 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
 
     /**
      * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     *
-     * @return void
      */
-    public function testGet(): void
+    public function testGet()
     {
         $productSku = 'configurable';
 
         $options = $this->getList($productSku);
-        $this->assertIsArray($options);
+        $this->assertTrue(is_array($options));
         $this->assertNotEmpty($options);
 
         foreach ($options as $option) {
             /** @var array $result */
             $result = $this->get($productSku, $option['id']);
 
-            $this->assertIsArray($result);
+            $this->assertTrue(is_array($result));
             $this->assertNotEmpty($result);
 
             $this->assertArrayHasKey('id', $result);
@@ -50,17 +47,15 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
             $this->assertEquals($option['label'], $result['label']);
 
             $this->assertArrayHasKey('values', $result);
-            $this->assertIsArray($result['values']);
+            $this->assertTrue(is_array($result['values']));
             $this->assertEquals($option['values'], $result['values']);
         }
     }
 
     /**
      * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     *
-     * @return void
      */
-    public function testGetList(): void
+    public function testGetList()
     {
         $productSku = 'configurable';
 
@@ -68,26 +63,26 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         $result = $this->getList($productSku);
 
         $this->assertNotEmpty($result);
-        $this->assertIsArray($result);
+        $this->assertTrue(is_array($result));
         $this->assertArrayHasKey(0, $result);
 
         $option = $result[0];
 
         $this->assertNotEmpty($option);
-        $this->assertIsArray($option);
+        $this->assertTrue(is_array($option));
 
         $this->assertArrayHasKey('id', $option);
         $this->assertArrayHasKey('label', $option);
         $this->assertEquals($option['label'], 'Test Configurable');
 
         $this->assertArrayHasKey('values', $option);
-        $this->assertIsArray($option);
+        $this->assertTrue(is_array($option));
         $this->assertNotEmpty($option);
 
         $this->assertCount(2, $option['values']);
 
         foreach ($option['values'] as $value) {
-            $this->assertIsArray($value);
+            $this->assertTrue(is_array($value));
             $this->assertNotEmpty($value);
 
             $this->assertArrayHasKey('value_index', $value);
@@ -95,25 +90,19 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
     }
 
     /**
-     * @return void
+     * @expectedException \Exception
+     * @expectedExceptionMessage The product that was requested doesn't exist. Verify the product and try again.
      */
-    public function testGetUndefinedProduct(): void
+    public function testGetUndefinedProduct()
     {
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage(
-            'The product that was requested doesn\'t exist. Verify the product and try again.'
-        );
-
         $productSku = 'product_not_exist';
         $this->getList($productSku);
     }
 
     /**
      * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     *
-     * @return void
      */
-    public function testGetUndefinedOption(): void
+    public function testGetUndefinedOption()
     {
         $expectedMessage = 'The "%1" entity that was requested doesn\'t exist. Verify the entity and try again.';
         $productSku = 'configurable';
@@ -121,7 +110,7 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         try {
             $this->get($productSku, $attributeId);
         } catch (\SoapFault $e) {
-            $this->assertStringContainsString(
+            $this->assertContains(
                 $expectedMessage,
                 $e->getMessage(),
                 'SoapFault does not contain expected message.'
@@ -135,10 +124,8 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
 
     /**
      * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     *
-     * @return void
      */
-    public function testDelete(): void
+    public function testDelete()
     {
         $productSku = 'configurable';
 
@@ -154,10 +141,8 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
     /**
      * @magentoApiDataFixture Magento/Catalog/_files/product_simple.php
      * @magentoApiDataFixture Magento/ConfigurableProduct/_files/configurable_attribute.php
-     *
-     * @return void
      */
-    public function testAdd(): void
+    public function testAdd()
     {
         /** @var AttributeRepositoryInterface $attributeRepository */
         $attributeRepository = Bootstrap::getObjectManager()->create(AttributeRepositoryInterface::class);
@@ -193,10 +178,8 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
 
     /**
      * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     *
-     * @return void
      */
-    public function testUpdate(): void
+    public function testUpdate()
     {
         $productSku = 'configurable';
         $configurableAttribute = $this->getConfigurableAttribute($productSku);
@@ -232,10 +215,8 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
 
     /**
      * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     *
-     * @return void
      */
-    public function testUpdateWithoutOptionId(): void
+    public function testUpdateWithoutOptionId()
     {
         $productSku = 'configurable';
         /** @var AttributeRepositoryInterface $attributeRepository */
@@ -271,19 +252,6 @@ class OptionRepositoryTest extends \Magento\TestFramework\TestCase\WebapiAbstrac
         $this->assertGreaterThan(0, $result);
         $configurableAttribute = $this->getConfigurableAttribute($productSku);
         $this->assertEquals($option['label'], $configurableAttribute[0]['label']);
-    }
-
-    /**
-     * @magentoApiDataFixture Magento/ConfigurableProduct/_files/product_configurable.php
-     *
-     * @return void
-     */
-    public function testDeleteNotExistsOption(): void
-    {
-        $message = (string)__('The option that was requested doesn\'t exist. Verify the entity and try again.');
-        $this->expectExceptionMessage($message);
-        $this->expectException(\Exception::class);
-        $this->delete('configurable', 555);
     }
 
     /**

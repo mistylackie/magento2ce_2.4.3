@@ -21,9 +21,10 @@ class CookieManagerTest extends \Magento\TestFramework\TestCase\WebapiAbstract
     /** @var CurlClientWithCookies */
     protected $curlClient;
 
-    protected function setUp(): void
+    public function setUp()
     {
         $objectManager = Bootstrap::getObjectManager();
+        $this->config = $objectManager->get(\Magento\Webapi\Model\Config::class);
         $this->curlClient = $objectManager->get(
             \Magento\TestFramework\TestCase\HttpClient\CurlClientWithCookies::class
         );

@@ -19,7 +19,7 @@ class UsesTest extends \PHPUnit\Framework\TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp(): void
+    public function setUp()
     {
         $this->uses = new Uses();
     }
@@ -27,7 +27,7 @@ class UsesTest extends \PHPUnit\Framework\TestCase
     /**
      * Covered hasUses method
      *
-     * @dataProvider hasUsesDataProvider
+     * @dataProvider usesDataProvider
      * @test
      *
      * @param array $tokens
@@ -45,7 +45,7 @@ class UsesTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public function hasUsesDataProvider()
+    public function usesDataProvider()
     {
         return [
             'simple' => [

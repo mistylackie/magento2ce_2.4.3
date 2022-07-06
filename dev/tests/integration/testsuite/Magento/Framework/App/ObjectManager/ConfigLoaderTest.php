@@ -14,7 +14,7 @@ class ConfigLoaderTest extends \PHPUnit\Framework\TestCase
      */
     private $object;
 
-    protected function setUp(): void
+    protected function setUp()
     {
         $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $this->object = $objectManager->create(
@@ -24,6 +24,7 @@ class ConfigLoaderTest extends \PHPUnit\Framework\TestCase
 
     public function testLoad()
     {
+        CacheCleaner::cleanAll();
         $data = $this->object->load('global');
         $this->assertNotEmpty($data);
         $cachedData = $this->object->load('global');

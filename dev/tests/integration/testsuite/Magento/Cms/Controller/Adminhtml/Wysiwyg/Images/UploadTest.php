@@ -15,8 +15,6 @@ use Magento\Framework\App\Response\Http as Response;
 
 /**
  * Test for \Magento\Cms\Controller\Adminhtml\Wysiwyg\Images\Upload class.
- *
- * @magentoAppArea adminhtml
  */
 class UploadTest extends \PHPUnit\Framework\TestCase
 {
@@ -63,7 +61,7 @@ class UploadTest extends \PHPUnit\Framework\TestCase
     /**
      * @inheritdoc
      */
-    protected function setUp(): void
+    protected function setUp()
     {
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
         $directoryName = 'directory1';
@@ -184,7 +182,7 @@ class UploadTest extends \PHPUnit\Framework\TestCase
         $this->model->getStorage()->getSession()->setCurrentPath($dirPath);
         $this->model->execute();
 
-        $this->assertFileDoesNotExist(
+        $this->assertFileNotExists(
             $this->fullDirectoryPath . $dirPath . $this->fileName
         );
     }
@@ -204,13 +202,13 @@ class UploadTest extends \PHPUnit\Framework\TestCase
         $this->model->getStorage()->getSession()->setCurrentPath($this->fullDirectoryPath);
         $this->model->execute();
 
-        $this->assertFileDoesNotExist($this->fullDirectoryPath . $newFilename);
+        $this->assertFileNotExists($this->fullDirectoryPath . $newFilename);
     }
 
     /**
      * @inheritdoc
      */
-    public static function tearDownAfterClass(): void
+    public static function tearDownAfterClass()
     {
         $filesystem = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
             ->get(\Magento\Framework\Filesystem::class);

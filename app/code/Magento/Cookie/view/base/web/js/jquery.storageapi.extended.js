@@ -16,11 +16,8 @@ define([
      * @private
      */
     function _extend(storage) {
-        var cookiesConfig = window.cookiesConfig || {};
-
         $.extend(storage, {
-            _secure: !!cookiesConfig.secure,
-            _samesite: cookiesConfig.samesite ? cookiesConfig.samesite : 'lax',
+            _secure: window.cookiesConfig ? window.cookiesConfig.secure : false,
 
             /**
              * Set value under name
@@ -33,8 +30,7 @@ define([
                     expires: this._expires,
                     path: this._path,
                     domain: this._domain,
-                    secure: this._secure,
-                    samesite: this._samesite
+                    secure: this._secure
                 };
 
                 $.cookie(this._prefix + name, value, $.extend(_default, options || {}));
@@ -60,10 +56,6 @@ define([
 
                 if (typeof c.secure !== 'undefined') {
                     this._secure = c.secure;
-                }
-
-                if (typeof c.samesite !== 'undefined') {
-                    this._samesite = c.samesite;
                 }
 
                 return this;

@@ -24,7 +24,7 @@ class PluginTest extends \PHPUnit\Framework\TestCase
      */
     protected $customerRepository;
 
-    protected function setUp(): void
+    public function setUp()
     {
         $this->accountManagement = Bootstrap::getObjectManager()->get(
             \Magento\Customer\Api\AccountManagementInterface::class
@@ -34,7 +34,7 @@ class PluginTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    protected function tearDown(): void
+    public function tearDown()
     {
         /** @var \Magento\Customer\Model\CustomerRegistry $customerRegistry */
         $customerRegistry = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()
@@ -204,23 +204,5 @@ class PluginTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($customer->getId(), (int)$subscriber->getCustomerId());
         $this->assertEquals($currentStore, (int)$subscriber->getStoreId());
-    }
-
-    /**
-     * Test get list customer, which have more then 2 subscribes in newsletter_subscriber.
-     *
-     * @magentoAppArea frontend
-     * @magentoDataFixture Magento/Newsletter/_files/subscribers.php
-     */
-    public function testCustomerWithTwoNewsLetterSubscriptions()
-    {
-        /** @var \Magento\Framework\Api\SearchCriteriaBuilder $searchBuilder */
-        $searchBuilder = Bootstrap::getObjectManager()->create(\Magento\Framework\Api\SearchCriteriaBuilder::class);
-        $searchCriteria = $searchBuilder->addFilter('entity_id', 1)->create();
-        $items = $this->customerRepository->getList($searchCriteria)->getItems();
-        /** @var \Magento\Customer\Api\Data\CustomerInterface $customer */
-        $customer = $items[0];
-        $extensionAttributes = $customer->getExtensionAttributes();
-        $this->assertTrue($extensionAttributes->getIsSubscribed());
     }
 }

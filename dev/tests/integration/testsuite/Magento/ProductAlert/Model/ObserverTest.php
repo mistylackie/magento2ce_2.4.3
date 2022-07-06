@@ -48,7 +48,7 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
     /**
      * @inheritDoc
      */
-    protected function setUp(): void
+    public function setUp()
     {
         Bootstrap::getInstance()->loadArea(Area::AREA_FRONTEND);
         $this->_objectManager = Bootstrap::getObjectManager();
@@ -69,9 +69,9 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
     public function testProcess()
     {
         $this->observer->process();
-        $this->assertStringContainsString(
-            'John Smith,',
-            $this->transportBuilder->getSentMessage()->getBody()->getParts()[0]->getRawContent()
+        $this->assertContains(
+            'ohn Smith,',
+            $this->transportBuilder->getSentMessage()->getRawMessage()
         );
     }
 
@@ -93,6 +93,7 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
         $secondStore = $storeRepository->get('fixture_second_store');
 
         // check if Portuguese language is specified for the second store
+        CacheCleaner::cleanAll();
         $storeResolver = $this->_objectManager->get(Resolver::class);
         $storeResolver->emulate($secondStore->getId());
         $this->assertEquals('pt_BR', $storeResolver->getLocale());
@@ -119,7 +120,7 @@ class ObserverTest extends \PHPUnit\Framework\TestCase
         $message = $this->transportBuilder->getSentMessage();
         $messageContent = $message->getBody()->getParts()[0]->getRawContent();
         $expectedText = array_shift($translation);
-        $this->assertStringContainsString('/frontend/Magento/luma/pt_BR/', $messageContent);
-        $this->assertStringContainsString(substr($expectedText, 0, 50), $messageContent);
+        $this->assertContains('/frontend/Magento/luma/pt_BR/', $messageContent);
+        $this->assertContains(substr($expectedText, 0, 50), $messageContent);
     }
 }

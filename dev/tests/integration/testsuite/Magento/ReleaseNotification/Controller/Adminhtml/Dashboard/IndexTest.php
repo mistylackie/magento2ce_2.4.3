@@ -17,11 +17,11 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
     private $objectManager;
 
     /**
-     * @var HttpContentProvider | \PHPUnit\Framework\MockObject\MockObject
+     * @var HttpContentProvider | \PHPUnit_Framework_MockObject_MockObject
      */
     private $contentProviderMock;
 
-    protected function setUp(): void
+    protected function setUp()
     {
         parent::setUp();
         $this->objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
@@ -31,10 +31,9 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->objectManager->addSharedInstance($this->contentProviderMock, HttpContentProvider::class);
     }
 
-    protected function tearDown(): void
+    protected function tearDown()
     {
         $this->objectManager->removeSharedInstance(ContentProviderInterface::class);
-        CacheCleaner::clean(['layout']);
         parent::tearDown();
     }
 
@@ -45,6 +44,7 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
     {
         $content = include __DIR__ . '/../../../_files/validContent.php';
 
+        CacheCleaner::cleanAll();
         $this->contentProviderMock->expects($this->any())
             ->method('getContent')
             ->willReturn($content);
@@ -54,14 +54,15 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->assertEquals(200, $this->getResponse()->getHttpResponseCode());
 
         $actual = $this->getResponse()->getBody();
-        $this->assertStringContainsString('1-mainContent title', $actual);
-        $this->assertStringContainsString('2-mainContent title', $actual);
-        $this->assertStringContainsString('3-mainContent title', $actual);
-        $this->assertStringContainsString('4-mainContent title', $actual);
+        $this->assertContains('1-mainContent title', $actual);
+        $this->assertContains('2-mainContent title', $actual);
+        $this->assertContains('3-mainContent title', $actual);
+        $this->assertContains('4-mainContent title', $actual);
     }
 
     public function testExecuteEmptyContent()
     {
+        CacheCleaner::cleanAll();
         $this->contentProviderMock->expects($this->any())
             ->method('getContent')
             ->willReturn('[]');
@@ -71,11 +72,12 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->assertEquals(200, $this->getResponse()->getHttpResponseCode());
 
         $actual = $this->getResponse()->getBody();
-        $this->assertStringContainsString('"autoOpen":false', $actual);
+        $this->assertContains('"autoOpen":false', $actual);
     }
 
     public function testExecuteFalseContent()
     {
+        CacheCleaner::cleanAll();
         $this->contentProviderMock->expects($this->any())
             ->method('getContent')
             ->willReturn(false);
@@ -85,6 +87,6 @@ class IndexTest extends \Magento\TestFramework\TestCase\AbstractBackendControlle
         $this->assertEquals(200, $this->getResponse()->getHttpResponseCode());
 
         $actual = $this->getResponse()->getBody();
-        $this->assertStringContainsString('"autoOpen":false', $actual);
+        $this->assertContains('"autoOpen":false', $actual);
     }
 }

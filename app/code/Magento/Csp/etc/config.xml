@@ -38,11 +38,6 @@
                         <inline>1</inline>
                         <eval>0</eval>
                         <dynamic>0</dynamic>
-                        <schemes>
-                            <http>http</http>
-                            <https>https</https>
-                            <blob>blob</blob>
-                        </schemes>
                     </children>
                     <connections>
                         <policy_id>connect-src</policy_id>
@@ -92,9 +87,6 @@
                         <inline>1</inline>
                         <eval>0</eval>
                         <dynamic>0</dynamic>
-                        <schemes>
-                            <data>data</data>
-                        </schemes>
                     </images>
                     <frames>
                         <policy_id>frame-src</policy_id>
@@ -123,9 +115,6 @@
                         <inline>1</inline>
                         <eval>0</eval>
                         <dynamic>0</dynamic>
-                        <schemes>
-                            <data>data</data>
-                        </schemes>
                     </fonts>
                 </storefront>
                 <admin>
@@ -149,11 +138,6 @@
                         <inline>1</inline>
                         <eval>0</eval>
                         <dynamic>0</dynamic>
-                        <schemes>
-                            <http>http</http>
-                            <https>https</https>
-                            <blob>blob</blob>
-                        </schemes>
                     </children>
                     <connections>
                         <policy_id>connect-src</policy_id>
@@ -203,9 +187,6 @@
                         <inline>1</inline>
                         <eval>0</eval>
                         <dynamic>0</dynamic>
-                        <schemes>
-                            <data>data</data>
-                        </schemes>
                     </images>
                     <frames>
                         <policy_id>frame-src</policy_id>
@@ -234,9 +215,6 @@
                         <inline>1</inline>
                         <eval>0</eval>
                         <dynamic>0</dynamic>
-                        <schemes>
-                            <data>data</data>
-                        </schemes>
                     </fonts>
                 </admin>
             </policies>

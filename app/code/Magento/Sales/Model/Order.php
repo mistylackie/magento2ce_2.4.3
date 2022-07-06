@@ -7,8 +7,6 @@ namespace Magento\Sales\Model;
 
 use Magento\Config\Model\Config\Source\Nooptreq;
 use Magento\Directory\Model\Currency;
-use Magento\Directory\Model\RegionFactory;
-use Magento\Directory\Model\ResourceModel\Region as RegionResource;
 use Magento\Framework\Api\AttributeValueFactory;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -44,17 +42,17 @@ use Magento\Store\Model\ScopeInterface;
  *
  * @api
  * @method int getGiftMessageId()
- * @method Order setGiftMessageId(int $value)
+ * @method \Magento\Sales\Model\Order setGiftMessageId(int $value)
  * @method bool hasBillingAddressId()
- * @method Order unsBillingAddressId()
+ * @method \Magento\Sales\Model\Order unsBillingAddressId()
  * @method bool hasShippingAddressId()
- * @method Order unsShippingAddressId()
+ * @method \Magento\Sales\Model\Order unsShippingAddressId()
  * @method int getShippigAddressId()
  * @method bool hasCustomerNoteNotify()
  * @method bool hasForcedCanCreditmemo()
  * @method bool getIsInProcess()
- * @method \Magento\Customer\Model\Customer|null getCustomer()
- * @method Order setSendEmail(bool $value)
+ * @method \Magento\Customer\Model\Customer getCustomer()
+ * @method \Magento\Sales\Model\Order setSendEmail(bool $value)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyFields)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -310,21 +308,6 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
     private $scopeConfig;
 
     /**
-     * @var RegionFactory
-     */
-    private $regionFactory;
-
-    /**
-     * @var array
-     */
-    private $regionItems;
-
-    /**
-     * @var RegionResource
-     */
-    private $regionResource;
-
-    /**
      * @param \Magento\Framework\Model\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Api\ExtensionAttributesFactory $extensionFactory
@@ -349,16 +332,14 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
      * @param ResourceModel\Order\CollectionFactory $salesOrderCollectionFactory
      * @param PriceCurrencyInterface $priceCurrency
      * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productListFactory
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource|null $resource
-     * @param \Magento\Framework\Data\Collection\AbstractDb|null $resourceCollection
+     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
+     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
-     * @param ResolverInterface|null $localeResolver
+     * @param ResolverInterface $localeResolver
      * @param ProductOption|null $productOption
-     * @param OrderItemRepositoryInterface|null $itemRepository
-     * @param SearchCriteriaBuilder|null $searchCriteriaBuilder
-     * @param ScopeConfigInterface|null $scopeConfig
-     * @param RegionFactory|null $regionFactory
-     * @param RegionResource|null $regionResource
+     * @param OrderItemRepositoryInterface $itemRepository
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param ScopeConfigInterface $scopeConfig
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
@@ -393,9 +374,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
         ProductOption $productOption = null,
         OrderItemRepositoryInterface $itemRepository = null,
         SearchCriteriaBuilder $searchCriteriaBuilder = null,
-        ScopeConfigInterface $scopeConfig = null,
-        RegionFactory $regionFactory = null,
-        RegionResource $regionResource = null
+        ScopeConfigInterface $scopeConfig = null
     ) {
         $this->_storeManager = $storeManager;
         $this->_orderConfig = $orderConfig;
@@ -424,9 +403,6 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
         $this->searchCriteriaBuilder = $searchCriteriaBuilder ?: ObjectManager::getInstance()
             ->get(SearchCriteriaBuilder::class);
         $this->scopeConfig = $scopeConfig ?: ObjectManager::getInstance()->get(ScopeConfigInterface::class);
-        $this->regionFactory = $regionFactory ?: ObjectManager::getInstance()->get(RegionFactory::class);
-        $this->regionResource = $regionResource ?: ObjectManager::getInstance()->get(RegionResource::class);
-        $this->regionItems = [];
 
         parent::__construct(
             $context,
@@ -518,7 +494,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
      * Load order by system increment identifier
      *
      * @param string $incrementId
-     * @return Order
+     * @return \Magento\Sales\Model\Order
      */
     public function loadByIncrementId($incrementId)
     {
@@ -530,7 +506,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
      *
      * @param string $incrementId
      * @param string $storeId
-     * @return Order
+     * @return \Magento\Sales\Model\Order
      */
     public function loadByIncrementIdAndStoreId($incrementId, $storeId)
     {
@@ -740,7 +716,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
         $hasDueAmount = $this->canInvoice() && ($checkAmtTotalPaid);
         //case when paid amount is refunded and order has creditmemo created
         $creditmemos = ($this->getCreditmemosCollection() === false) ?
-             true : ($this->_memoCollectionFactory->create()->setOrderFilter($this)->getTotalCount() > 0);
+             true : (count($this->getCreditmemosCollection()) > 0);
         $paidAmtIsRefunded = $this->getTotalRefunded() == $totalPaid && $creditmemos;
         if (($hasDueAmount || $paidAmtIsRefunded) ||
             (!$checkAmtTotalPaid &&
@@ -882,7 +858,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
      */
     public function canReorder()
     {
-        return $this->_canReorder();
+        return $this->_canReorder(false);
     }
 
     /**
@@ -1352,7 +1328,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
      */
     public function getShippingMethod($asObject = false)
     {
-        $shippingMethod = $this->getData('shipping_method');
+        $shippingMethod = parent::getShippingMethod();
         if (!$asObject || !$shippingMethod) {
             return $shippingMethod;
         } else {
@@ -1373,18 +1349,6 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
         $collection = $this->_addressCollectionFactory->create()->setOrderFilter($this);
         if ($this->getId()) {
             foreach ($collection as $address) {
-                if (isset($this->regionItems[$address->getCountryId()][$address->getRegion()])) {
-                    if ($this->regionItems[$address->getCountryId()][$address->getRegion()]) {
-                        $address->setRegion($this->regionItems[$address->getCountryId()][$address->getRegion()]);
-                    }
-                } else {
-                    $region = $this->regionFactory->create();
-                    $this->regionResource->loadByName($region, $address->getRegion(), $address->getCountryId());
-                    $this->regionItems[$address->getCountryId()][$address->getRegion()] = $region->getName();
-                    if ($region->getName()) {
-                        $address->setRegion($region->getName());
-                    }
-                }
                 $address->setOrder($this);
             }
         }
@@ -2088,7 +2052,7 @@ class Order extends AbstractModel implements EntityInterface, OrderInterface
     {
         $storeId = $this->getStoreId();
         if ($storeId === null) {
-            return $this->getStoreName();
+            return $this->getStoreName(1);
         }
         return $this->getStore()->getGroup()->getName();
     }
