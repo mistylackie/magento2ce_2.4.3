@@ -7,11 +7,9 @@
 namespace Magento\Setup\Module\Di\Code\Reader;
 
 /**
- * FileScanner code reader
- *
  * @SuppressWarnings(PHPMD)
  */
-class FileScanner extends \Laminas\Code\Scanner\FileScanner
+class FileScanner extends \Zend\Code\Scanner\FileScanner
 {
     /**
      * @var int
@@ -19,7 +17,7 @@ class FileScanner extends \Laminas\Code\Scanner\FileScanner
     private $tokenType;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     protected function scan()
     {
@@ -28,7 +26,7 @@ class FileScanner extends \Laminas\Code\Scanner\FileScanner
         }
 
         if (!$this->tokens) {
-            throw new \Laminas\Code\Exception\RuntimeException('No tokens were provided');
+            throw new \Zend\Code\Exception\RuntimeException('No tokens were provided');
         }
 
         /**
@@ -36,14 +34,6 @@ class FileScanner extends \Laminas\Code\Scanner\FileScanner
          */
         if (!defined('T_TRAIT')) {
             define('T_TRAIT', 42001);
-        }
-
-        // ensure php backwards compatibility (from laminas code 3.5.x)
-        if (!defined('T_NAME_QUALIFIED')) {
-            define('T_NAME_QUALIFIED', 24001);
-        }
-        if (!defined('T_NAME_FULLY_QUALIFIED')) {
-            define('T_NAME_FULLY_QUALIFIED', 24002);
         }
 
         /**
@@ -116,7 +106,6 @@ class FileScanner extends \Laminas\Code\Scanner\FileScanner
             return $infoIndex;
         };
 
-        // phpcs:disable
         /**
          * START FINITE STATE MACHINE FOR SCANNING TOKENS
          */
@@ -368,6 +357,5 @@ class FileScanner extends \Laminas\Code\Scanner\FileScanner
          * END FINITE STATE MACHINE FOR SCANNING TOKENS
          */
         $this->isScanned = true;
-        // phpcs:enable
     }
 }
